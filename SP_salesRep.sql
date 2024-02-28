@@ -76,7 +76,7 @@ BEGIN
             ELSE ((D.[Total Sales]-(D.COST*D.[Quantity Sold]))/NULLIF(D.[Total Sales], 0))*100 
             END 
     END AS 'Profit Margin' 
-
+    ,FreeTxt
     ,TU.*
 
 
