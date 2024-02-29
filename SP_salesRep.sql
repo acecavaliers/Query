@@ -226,24 +226,6 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
 
     SELECT DISTINCT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,
 
-    -- ISNULL(T6.PO_#,T5.PO_#) AS 'DE-AP',
-    -- 12/15 DE-AP
-    -- CASE WHEN T6.APCNT>1 AND T6.ARCNT=0 
-    -- THEN ''
-    -- WHEN T6.APCNT>1 AND T6.ARCNT <> 0 
-    -- THEN (SELECT top 1  A.DOCENTRY FROM PCH21 A
-    --         INNER JOIN PCH1 B ON A.DocEntry=B.DocEntry 
-    --         WHERE RefObjType=13
-    --         AND RefDocNum=T0.DocEntry
-    --         AND ItemCode=T0.ItemCode)
-    -- ELSE 
-    -- ISNULL((SELECT top 1 A.DOCENTRY FROM PCH21 A
-    --         INNER JOIN PCH1 B ON A.DocEntry=B.DocEntry 
-    --         WHERE RefObjType=13
-    --         AND RefDocNum=T0.DocEntry
-    --         AND ItemCode=T0.ItemCode),
-    --     ISNULL(T6.PO_#,T5.PO_#))
-    --     END AS 'DE-AP',
     CASE 
         WHEN  T5.PO_# IS NOT NULL 
         THEN T5.PO_#
@@ -257,22 +239,16 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
 
     CASE 
         WHEN  T5.PO_# IS NOT NULL 
-        THEN 0
-        WHEN T6.PO_#  IS NOT NULL
         THEN 22
+        WHEN T6.PO_#  IS NOT NULL
+        THEN 18
         
         WHEN T7.PO_#  IS NOT NULL
         THEN 18
         ELSE  0
     END AS 'TRANSTYPE',
 
-
-    -- CASE WHEN ISNULL((SELECT top 1 A.DOCENTRY FROM PCH21 A
-    --         INNER JOIN PCH1 B ON A.DocEntry=B.DocEntry 
-    --         WHERE RefObjType=13
-    --         AND RefDocNum=T0.DocEntry
-    --         AND ItemCode=T0.ItemCode),ISNULL(T5.INMPrice,T6.INMPrice)) IS NOT NULL THEN 18 ELSE 0 END AS 'TRANSTYPE',
-
+   
     T3.BPLID AS 'BRANCH ID',
     CASE 
         WHEN T3.isIns ='Y' 
@@ -366,28 +342,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
                                 and LineNum<>(SELECT MAX(LineNum) FROM PCH21 WHERE DocEntry=Z.DocEntry)
                                 )DDD),0) 
 
-        -- WHEN T7.Quantity IS NOT NULL AND T7.APCNT>1
-        -- THEN T0.Quantity
         
-        --T7.Quantity
-
-        -- WHEN T6.APCNT>1 AND T6.ARCNT=0 
-        -- THEN T0.Quantity
-        -- WHEN T6.APCNT>1 AND T6.ARCNT <> 0 
-        -- THEN T6.Quantity
-        -- WHEN T7.APCNT>1 AND T7.ARCNT=0 
-        -- THEN T0.Quantity        
-        -- WHEN T7.APCNT>1 AND T7.ARCNT <> 0 
-        -- THEN T7.Quantity       
-        -- WHEN T7.APCNT=1 AND T7.ARCNT =1 
-        -- THEN T7.Quantity
-        -- WHEN (SELECT COUNT(DocEntry)AS A FROM PCH21 WHERE RefObjType=13 AND DocEntry=(SELECT DocEntry from pch21 where RefDocNum=T0.DocEntry and RefObjType=13)) >1 
-        -- THEN T7.Quantity-ISNULL((SELECT SUM(QQ) FROM(
-        --                 SELECT (SELECT SUM(Quantity) FROM INV1 WHERE DocEntry=Z.RefDocNum) AS QQ FROM PCH21 Z 
-        --                 WHERE DocEntry=T7.DocEntry AND RefObjType=13
-        --                 and LineNum<>(SELECT MAX(LineNum) FROM PCH21 WHERE DocEntry=Z.DocEntry)
-        --                 )DDD),0) 
-       
     ELSE 
         (T0.Quantity - ISNULL(T11.Quantity,0))
        
@@ -447,13 +402,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     --VIA PO
     LEFT JOIN (	
                 SELECT TB.NumPerMsr,TA.DocEntry,TC.DocNum,TB.BaseEntry,TC.TaxDate ,TB.Quantity,TB.ItemCode,TB.WhsCode,TB.INMPRICE,TB.DocEntry AS 'PO_#','PO'AS 'RTYPE'
-                -- ,CASE 
-                -- WHEN TC.U_BrokerCode IS NOT NULL AND (SELECT U_VATType from OCRD where CardCode =TC.U_BrokerCode)='Vatable'
-                -- THEN 				
-                -- (TC.U_ARRASTRE+TC.U_BROKERAGE_FEE+TC.U_DOC_STAMP+TC.U_FREIGHT+TC.U_LABOR+TC.U_INSURANCE+TC.U_TRUCKING+TC.U_WHARFAGE+TC.U_OTHERS)/1.12 
-                -- ELSE 
-                -- (TC.U_ARRASTRE+TC.U_BROKERAGE_FEE+TC.U_DOC_STAMP+TC.U_FREIGHT+TC.U_LABOR+TC.U_INSURANCE+TC.U_TRUCKING+TC.U_WHARFAGE+TC.U_OTHERS)
-                -- END 
+                 
                 ,0 AS 'LANDEDCOST'
                 FROM INV21 TA
                 INNER JOIN POR1 TB ON TA.RefDocNum=TB.DocEntry 
@@ -465,21 +414,12 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
                 )AS T5
                 ON T5.DocEntry=T0.DocEntry
                 AND T5.ItemCode=T0.ItemCode 
-                -- AND T5.WhsCode=T0.WhsCode
     -- --VIA AP
     LEFT JOIN (
             SELECT TC.NumPerMsr, TA.DocEntry,TD.DocNum,TD.TaxDate ,TC.Quantity,TC.ItemCode,TC.WhsCode,TC.INMPRICE        ,TC.DocEntry AS 'PO_#','AP'AS 'RTYPE'            
             ,(SELECT COUNT(DISTINCT DOCENTRY) FROM PCH1 WHERE BaseType=22 AND BaseEntry=TB.DocEntry) AS APCNT
             ,(SELECT COUNT(DocEntry) FROM PCH21 WHERE RefObjType=13 AND DocEntry=TC.DocEntry) AS ARCNT 
            
-           
-            -- ,CASE 
-            -- WHEN TD.U_BrokerCode IS NOT NULL AND (SELECT U_VATType from OCRD where CardCode =TD.U_BrokerCode)='Vatable'
-            -- THEN 				
-            -- (TD.U_ARRASTRE+TD.U_BROKERAGE_FEE+TD.U_DOC_STAMP+TD.U_FREIGHT+TD.U_LABOR+TD.U_INSURANCE+TD.U_TRUCKING+TD.U_WHARFAGE+TD.U_OTHERS)/1.12 
-            -- ELSE 
-            -- (TD.U_ARRASTRE+TD.U_BROKERAGE_FEE+TD.U_DOC_STAMP+TD.U_FREIGHT+TD.U_LABOR+TD.U_INSURANCE+TD.U_TRUCKING+TD.U_WHARFAGE+TD.U_OTHERS)
-            -- END 
             ,0 AS 'LANDEDCOST'
             FROM INV21 TA
             INNER JOIN POR1 TB ON TA.RefDocNum=TB.DocEntry 
@@ -505,15 +445,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
                         END
                 
                 AS ARLAST
-                 ,
-                --CASE 
-                -- WHEN TD.U_BrokerCode IS NOT NULL AND (SELECT U_VATType from OCRD where CardCode =TD.U_BrokerCode)='Vatable'
-                -- THEN 				
-                -- (TD.U_ARRASTRE+TD.U_BROKERAGE_FEE+TD.U_DOC_STAMP+TD.U_FREIGHT+TD.U_LABOR+TD.U_INSURANCE+TD.U_TRUCKING+TD.U_WHARFAGE+TD.U_OTHERS)/1.12 
-                -- ELSE 
-                -- (TD.U_ARRASTRE+TD.U_BROKERAGE_FEE+TD.U_DOC_STAMP+TD.U_FREIGHT+TD.U_LABOR+TD.U_INSURANCE+TD.U_TRUCKING+TD.U_WHARFAGE+TD.U_OTHERS)
-                -- END 
-                0 AS 'LANDEDCOST'
+                ,0 AS 'LANDEDCOST'
                 FROM  PCH21 TT
                 INNER JOIN PCH1 TC ON TT.DocEntry=TC.DocEntry --AND TC.BaseType=22
                 INNER JOIN OPCH TD ON TC.DocEntry=TD.DocNum 
