@@ -6,6 +6,9 @@
 -- @DATETO DATE ='2023-12-31', 
 -- @DATEFROMPREV  DATE = '2022-01-01', 
 -- @DATETOPREV DATE = '2022-12-31'
+-- no statement of cash flow
+
+
 DECLARE @BRANCH Varchar(20)='{?brachID}', 
 @DATEFROM DATE ={?DateFrom} ,
 @DATETO DATE ={?DateTo} , 
