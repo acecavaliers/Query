@@ -2,11 +2,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
--- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
--- =============================================
+
 ALTER PROCEDURE [dbo].[SP_SaleReportPerItemAP_By_AC]
 @DATEFROM DATE
 ,@DATETO DATE 
