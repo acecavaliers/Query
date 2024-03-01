@@ -9,20 +9,20 @@
 
 
 
- DECLARE 
- @DATEFROM DATE ='2023-01-01', 
- @DATETO DATE ='2023-12-31',
- @DEPARTMENT VARCHAR(100)='',
- @CATEGORY VARCHAR(100)='',
- @ITEMNAME VARCHAR(200)='',
- @STORE VARCHAR(50)='gsc_dcc',
- @SortBy VARCHAR(100)='Total Quantity'
+DECLARE 
+@DATEFROM DATE ='2023-01-01', 
+@DATETO DATE ='2023-12-31',
+@DEPARTMENT VARCHAR(100)='',
+@CATEGORY VARCHAR(100)='',
+@ITEMNAME VARCHAR(200)='',
+@STORE VARCHAR(50)='gsc_dcc',
+@SortBy VARCHAR(100)='Total Quantity'
   
 
 SET @STORE=REPLACE(REPLACE(@STORE,'ALL (Top from all Store)',''),'ALL (Top per Store)','')
 
-SELECT * from(
-select 
+-- SELECT * from(
+SELECT 
 [Item Code] as 'Itemcode',
 DESCRPTN as 'ItemName',
 Department,
@@ -34,12 +34,12 @@ SUM(TOTALCOST) as 'Cost',
 SUM(TOTALSALES) as 'Total Sales',
 CAST(SUM(TOTALSALES) AS FLOAT) - CAST(SUM(TOTALCOST) AS FLOAT) as 'Gross Profit',
 CASE 
-		WHEN (SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) > 0 
-		THEN isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) * 100, 0 )
-		ELSE isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) , 0 ) 
-	END as 'Gross Profit Percentage'
+    WHEN (SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) > 0 
+    THEN isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) * 100, 0 )
+    ELSE isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) , 0 ) 
+END as 'Gross Profit Percentage'
 
-from(
+FROM(
 SELECT 
 XX.Transaction#,
 XX.[Item Code],
@@ -52,14 +52,7 @@ XX.[Quantity Sold] AS TOTALQTY,
 XX.COST*XX.[Quantity Sold] AS TOTALCOST,
 XX.TotalSales*XX.[Quantity Sold] AS TOTALSALES,
 Whse
--- max(replace(left(Whse,6),'KORKM2','KOROST')) AS WhsCode
 
--- CAST((SUM(TotalSales)*SUM(XX.[Quantity Sold])) AS FLOAT) - CAST((SUM(Cost)*SUM(XX.[Quantity Sold])) AS FLOAT) as 'Gross Profit',
--- CASE 
--- 	WHEN ((SUM(TotalSales)*SUM(XX.[Quantity Sold])) - (SUM(Cost))*SUM(XX.[Quantity Sold])) / nullif( (SUM(TotalSales)*SUM(XX.[Quantity Sold])) , 0 ) > 0 
--- 	THEN isnull(((SUM(TotalSales)*SUM(XX.[Quantity Sold])) - (SUM(Cost)*SUM(XX.[Quantity Sold]))) / nullif( (SUM(TotalSales)*SUM(XX.[Quantity Sold])) , 0 ) * 100, 0 )
--- 	ELSE isnull(((SUM(TotalSales)*SUM(XX.[Quantity Sold])) - (SUM(Cost)*SUM(XX.[Quantity Sold]))) / nullif( (SUM(TotalSales)*SUM(XX.[Quantity Sold])) , 0 ) , 0 ) 
--- END as 'Gross Profit Percentage'
 
 FROM(
 
@@ -1009,10 +1002,11 @@ AND DESCRPTN NOT LIKE '%DELIVERY CHARGE%'
 
 )xxx
 GROUP BY DESCRPTN,[Item Code],Department,Category,unit,Store
-)DD
-ORDER BY 
-case when @SortBy='Gross Profit Percentage' then  [Gross Profit Percentage]
-when @SortBy = 'Total Quantity' then [Total Quantity Sold]
-when @SortBy ='Total Sales' then [Total Sales]
-END DESC
+
+-- )DD
+-- ORDER BY 
+-- case when @SortBy='Gross Profit Percentage' then  [Gross Profit Percentage]
+-- when @SortBy = 'Total Quantity' then [Total Quantity Sold]
+-- when @SortBy ='Total Sales' then [Total Sales]
+-- END DESC
 

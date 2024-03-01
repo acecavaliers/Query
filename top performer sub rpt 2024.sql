@@ -1,4 +1,4 @@
-
+SELECT DISTINCT BPLNAME FROM OINV
 
 -- DECLARE @DATEFROM DATE ={?PeriodFrom}, 
 -- @DATETO DATE = {?PeriodTo},
@@ -72,6 +72,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T3.Comments AS 'Comments',
     T0.WhsCode AS 'Whse',
     T0.OcrCode as Store,
+    T3.BPLName,
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
     T0.Dscription AS 'Description',
@@ -116,6 +117,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T3.Comments AS 'Comments',
     T0.WhsCode AS 'Whse',
     T0.OcrCode as Store,
+    T3.BPLName,
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
     T0.Dscription AS 'Description',
@@ -171,6 +173,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T7.Comments AS 'Comments',
     T0.WhsCode AS 'Whse',
     T0.OcrCode as Store,
+    T3.BPLName,
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
     T0.Dscription AS 'Description',
@@ -298,6 +301,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     END AS 'Comments',
     T0.WhsCode AS 'Whse',
     T0.OcrCode as Store,
+    T3.BPLName,
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
     T0.Dscription AS 'Description',
@@ -507,6 +511,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     END AS 'Comments',
     T0.WhsCode AS 'Whse',
     T0.OcrCode as Store,
+    T3.BPLName,
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
     T0.Dscription AS 'Description',
@@ -643,6 +648,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     END AS 'Comments',
     T0.WhsCode AS 'Whse',
     T0.OcrCode as Store,
+    T3.BPLName,
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
     T0.Dscription AS 'Description', 
@@ -769,6 +775,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T3.Comments AS 'Comments',
     T0.WhsCode AS 'Whse',
     T0.OcrCode as Store,
+    T3.BPLName,
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
     T0.Dscription AS 'Description',
@@ -828,6 +835,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     and ShortName='RV010-0200-0000')) 
     AS 'Whse',
     T0.OcrCode as Store,
+    T3.BPLName,
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
     T0.Dscription AS 'Description',
@@ -942,7 +950,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
 
 )XX
 WHERE [Posting Date] BETWEEN @DATEFROM AND  @DATETO
--- AND Store LIKE '%'+@STORE+'%'
+AND CASE WHEN @STORE LIKE '%BRANCH%' THEN BPLName ELSE STORE END LIKE '%'+@STORE+'%'
 AND Department LIKE '%'+@DEPARTMENT+'%'
 AND [Description] NOT LIKE '%DELIVERY CHARGE%'
 
