@@ -1,76 +1,63 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-ALTER PROCEDURE [dbo].[SP_SaleReportPerItemAP_By_AC]
-@DATEFROM DATE
-,@DATETO DATE 
-,@DEPARTMENT VARCHAR(100)
-,@CATEGORY VARCHAR(100)
-,@ITEMNAME VARCHAR(100)
-,@STORE VARCHAR(20)
-,@USER VARCHAR(50)
-AS
-BEGIN 
-
-    SET @STORE = REPLACE((@STORE),'ALL STORE','') 
-
-    SELECT 
-    DISTINCT
-    Department,
-    Category,
-    TRANSACTION#,
-    [POSTING DATE],
-    [TYPE],
-    [INVOICE NO.],
-    D.Number,
-    ISNULL(CASE WHEN D.[DE-AP]<>0 
-    THEN convert(varchar(20),OJDT.Number)
-    WHEN TYPE='AR RESERVE' AND (SELECT COUNT(BASEENTRY) FROM DLN1 WHERE BaseEntry=D.Transaction# AND DLN1.ItemCode=D.[Item Code])=0
-    THEN CONCAT('AR - ',D.Transaction# )
-    ELSE convert(varchar(20),D.Number)
-    END, D.Number) AS 'JE-COST',
-    Reference,
-    ReferenceDate,
-    Customer,
-    Comments,
-    Whse,
-    [Item Code],
-    [Description],
-    unit,
-    [Quantity Sold],
-    [Price Before Discount],
-    [Price After Discount],
-    [Price After Discount(VAT-Ex)],
-    [Total Sales],
-    COST,
-    CASE WHEN D.TYPE='AR Credit Memo' 
-        THEN (D.COST*D.[Quantity Sold])*-1 
-        ELSE D.COST*D.[Quantity Sold] 
-    END  AS 'Total Cost',
-    CASE WHEN D.SWW='FREEBIES' AND D.[Total Sales]=0 
-        THEN 0 
-        ELSE 
-            CASE WHEN D.TYPE='AR Credit Memo' 
-            THEN D.[Total Sales]-((D.COST*D.[Quantity Sold])*-1)
-            ELSE D.[Total Sales]-(D.COST*D.[Quantity Sold]) 
-            END
-    END AS 'Gross Profit',
-    CASE WHEN D.SWW='FREEBIES' AND D.[Total Sales]=0 
-        THEN 0 
-        ELSE 
-            CASE WHEN D.TYPE='AR Credit Memo' 
-            THEN (((D.[Total Sales]-((D.COST*D.[Quantity Sold])*-1))/NULLIF(D.[Total Sales], 0))*100)*-1 
-            ELSE ((D.[Total Sales]-(D.COST*D.[Quantity Sold]))/NULLIF(D.[Total Sales], 0))*100 
-            END 
-    END AS 'Profit Margin' 
-    ,FreeTxt
-    ,TU.*
 
 
-    FROM(
---STANDARD AR
+-- DECLARE @DATEFROM DATE ={?PeriodFrom}, 
+-- @DATETO DATE = {?PeriodTo},
+-- @DEPARTMENT VARCHAR(100)='{?Department}',
+-- @CATEGORY VARCHAR(100)='',
+-- @STORE VARCHAR(50)='{?Store}',
+-- @SortBy VARCHAR(100)='{?SortBy}'
+
+
+
+DECLARE 
+@DATEFROM DATE ='2024-01-01', 
+@DATETO DATE ='2024-02-02',
+@DEPARTMENT VARCHAR(100)='',
+@CATEGORY VARCHAR(100)='',
+@ITEMNAME VARCHAR(200)='',
+@STORE VARCHAR(50)='gsc_dcc',
+@SortBy VARCHAR(100)='Total Quantity',
+@top INT=15
+  
+
+SELECT TOP (@top ) * from(
+SELECT 
+[Item Code] as 'Itemcode',
+[Description] as 'ItemName',
+Department,
+Category,
+Store,
+unit as 'UomCode',
+SUM(TOTALQTY) as 'Total Quantity Sold',
+SUM(TOTALCOST) as 'Cost',
+SUM(TOTALSALES) as 'Total Sales',
+CAST(SUM(TOTALSALES) AS FLOAT) - CAST(SUM(TOTALCOST) AS FLOAT) as 'Gross Profit',
+CASE 
+    WHEN (SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) > 0 
+    THEN isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) * 100, 0 )
+    ELSE isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) , 0 ) 
+END as 'Gross Profit Percentage'
+
+FROM(
+SELECT 
+XX.Transaction#,
+XX.[Item Code],
+XX.[Description],
+Department,
+Category,
+Store,
+unit,
+-- IIF(TYPE='AR Credit Memo',XX.[Quantity Sold]*-1,XX.[Quantity Sold]) AS TOTALQTY,
+XX.[Quantity Sold] AS TOTALQTY,
+IIF(TYPE='AR Credit Memo',(XX.COST*XX.[Quantity Sold])*-1,(XX.COST*XX.[Quantity Sold])) AS TOTALCOST,
+IIF(TYPE='AR Credit Memo',XX.[Total Sales]*-1,XX.[Total Sales]) AS TOTALSALES,
+Whse,
+FreeTxt
+
+
+FROM(
+SELECT DISTINCT * FROM
+(    --STANDARD AR
 SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TRANSTYPE',
     T3.BPLID AS 'BRANCH ID',
     'AR INVOICE' AS 'TYPE',
@@ -951,43 +938,20 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     AND T3.TaxDate >= @DATEFROM AND T3.TaxDate <= @DATETO
     AND T3.CANCELED='N'
     AND T0.BaseType<>203
+    )RR
 
-    ) D
-    LEFT JOIN OJDT ON OJDT.BaseRef=D.[DE-AP] AND OJDT.TransType = D.TRANSTYPE
-    LEFT JOIN (
-                SELECT 1 AS B,
-                (Select CONCAT(LEFT([Version],2),'.',RIGHT(LEFT([Version],4),2),'.',RIGHT([Version],3)) from CINF)AS 'VERSION',
-                CONCAT(firstName,' ' ,lastName) AS 'NAME',
-                (Select CompnyName from OADM) as 'CompnyName',
-                (SELECT 
-                CASE WHEN Street IS NULL THEN '' ELSE Street + ', ' END   + CASE WHEN Block IS NULL THEN '' ELSE Block + ', ' END +
-                CASE WHEN City IS NULL THEN '' ELSE City + ', ' END + CASE WHEN ZipCode IS NULL THEN '' ELSE ZipCode END + CASE WHEN County IS NULL THEN '' ELSE County END AS CompAddress
-                FROM ADM1) AS 'CompnyAddr',
-                C.FedTaxID,
-                CONCAT(
-                    CASE WHEN C.[Street] = '' OR C.[Street] = NULL THEN '' ELSE C.[Street]+' 'END,
-                    CASE WHEN C.[StreetNo] = '' OR C.[StreetNo] = NULL THEN '' ELSE C.[StreetNo]+' 'END,
-                    CASE WHEN C.[Block] = '' OR C.[Block] = NULL THEN '' ELSE C.[Block]+' 'END,
-                    CASE WHEN C.[City] = '' OR C.[City] = NULL THEN '' ELSE C.[City]+' 'END,
-                    CASE WHEN C.[ZipCode] = '' OR C.[ZipCode] = NULL THEN '' ELSE C.[ZipCode]+' 'END,
-                    CASE WHEN C.[Country] = '' OR C.[Country] = NULL THEN '' ELSE C.[Country]END
-                    ) AS ComAddr,GlblLocNum AS ContactNos
+)XX
+WHERE [Posting Date] BETWEEN @DATEFROM AND  @DATETO
+-- AND Store LIKE '%'+@STORE+'%'
+AND Department LIKE '%'+@DEPARTMENT+'%'
+AND [Description] NOT LIKE '%DELIVERY CHARGE%'
 
-                FROM OWHS C
-                INNER JOIN OUDG T1 ON C.WhsCode=T1.Warehouse
-                INNER JOIN OUSR T2 ON  T2.DfltsGroup=T1.Code 
-                INNER JOIN OHEM T3 ON T3.USERID=T2.USERID 
-                WHERE T2.U_Name = @USER
-    )TU ON TU.B=1
-    WHERE D.[Quantity Sold]<>0
-    AND D.[BRANCH ID] NOT IN (SELECT BPLId FROM OBPL WHERE U_isDC='Y')
-    AND D.Department LIKE '%'+@DEPARTMENT+'%' 
-    AND D.Category LIKE '%'+@CATEGORY+'%'
-    AND D.Description LIKE '%'+@ITEMNAME+'%'
-    AND D.Whse LIKE '%'+@STORE+'%'
-    AND D.[Posting Date] BETWEEN @DATEFROM AND  @DATETO
-    AND D.CANCELED='N'
-    ORDER BY 'Transaction#' ASC
+)xxx
+GROUP BY [Description] ,[Item Code],Department,Category,unit,Store
 
-END
-GO
+)DD
+ORDER BY 
+case when @SortBy='Gross Profit Percentage' then  [Gross Profit Percentage]
+when @SortBy = 'Total Quantity' then [Total Quantity Sold]
+when @SortBy ='Total Sales' then [Total Sales]
+END DESC
