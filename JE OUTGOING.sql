@@ -1,14 +1,3 @@
-
-select T0.DocNum,T0.DocEntry as JENumber,U_GrossAmt,SumApplied,T0.U_WTax,U_WTaxPay,CardCode,DocDate
-from VPM2 T0
-INNER JOIN OVPM T1 ON T1.DocNum=T0.DocNum
-where InvType=30
-AND 
-
-
-
-
-
 SELECT * FROM OJDT T0
 LEFT JOIN VPM2 T1 ON T1.DOCENTRY=T0.Number AND TRANSCODE='OBB'
 
