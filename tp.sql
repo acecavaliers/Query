@@ -196,7 +196,6 @@ GROUP BY ITEMCODE, ITEMNAME, OrderCode, ItemGroup, Category,Store ,UomCode
 -- case when @SortBy='Gross Profit Percentage' then   CAST ( (SUM(Sales) - SUM(Cost)) / nullif( SUM(Sales), 0 ) * 100 as MONEY ) 
 -- when @SortBy = 'Quantity' then SUM(Quantity) 
 -- when @SortBy ='Total Sales' then CAST(SUM(Sales) AS FLOAT) 
--- END DESC
 )DD
 
 ORDER BY 
