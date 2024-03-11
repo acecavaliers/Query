@@ -1,13 +1,14 @@
 
 
 DECLARE 
-@DATEFROM DATE ='2023-12-01', 
+@DATEFROM DATE ='2023-05-01', 
 @DATETO DATE ='2023-12-31',
 @DEPARTMENT VARCHAR(100)='',
 @CATEGORY VARCHAR(100)='',
 @ITEMNAME VARCHAR(200)='',
-@STORE VARCHAR(50)='gsc_dcc'
+@STORE VARCHAR(50)=''
 
+SELECT * FROM (
     -- STANDARD AR
 SELECT 
     T4.Name AS C,
@@ -15,16 +16,21 @@ SELECT
     
     T0.DocEntry AS 'Transaction#',
     T3.TaxDate AS 'Posting Date',
+    Month(T3.TaxDate) AS 'Month',
+    CONCAT(Month(T3.TaxDate),'G' )AS 'GRSMonth',
+    CONCAT(Month(T3.TaxDate),'Q' )AS 'QMonth',
     
    
     T3.CardName AS 'Customer',
     
-    T0.WhsCode AS 'Whse',
-    T0.OcrCode as Store,
-    T3.BPLName,
+   
+    
+    
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
-    
+    T0.UOMCODE,
+    T0.NumPerMsr,
+    IIF(T0.NumPerMsr>1,T0.QUANTITY*T0.NumPerMsr,T0.Quantity) LWST,
     T0.Quantity AS 'Quantity Sold',
     T0.U_GPBD AS 'Price Before Discount',
     T0.PriceAfVAT AS 'Price After Discount',
@@ -40,9 +46,9 @@ SELECT
     INNER JOIN dbo.[@SALESAGENT] T4 ON T4.Code=T3.U_SalesAgent 
 
     WHERE T3.DocType = 'I'    
-    AND T3.TaxDate BETWEEN @DATEFROM AND  @DATETO
     AND T3.CANCELED='N'
     AND T3.isIns='N'
+    -- AND T3.TaxDate BETWEEN @DATEFROM AND @DATETO
     AND T3.U_BO_DRS ='N' AND T3.U_BO_DSDD ='N' AND T3.U_BO_DSDV ='N' AND T3.U_BO_DSPD ='N'
 
     UNION ALL --AR RESERRVE
@@ -52,16 +58,22 @@ SELECT
     
     T0.DocEntry AS 'Transaction#',
     T3.TaxDate AS 'Posting Date',
+    Month(T3.TaxDate) AS 'Month',
+    CONCAT(Month(T3.TaxDate),'G' )AS 'GRSMonth',
+    CONCAT(Month(T3.TaxDate),'Q' )AS 'QMonth',
     
     
     T3.CardName AS 'Customer',
     
-    T0.WhsCode AS 'Whse',
-    T0.OcrCode as Store,
-    T3.BPLName,
+   
+    
+    
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
+    T0.UOMCODE,
+    T0.NumPerMsr,
     
+    IIF(T0.NumPerMsr>1,(T0.Quantity-ISNULL(T7.QTY,0))*T0.NumPerMsr,T0.Quantity-ISNULL(T7.QTY,0)) LWST,
     T0.Quantity-ISNULL(T7.QTY,0) AS 'Quantity Sold',
     T0.U_GPBD AS 'Price Before Discount',
     T0.PriceAfVAT AS 'Price After Discount',
@@ -86,9 +98,9 @@ SELECT
                AND T7.ItemCode=T0.ItemCode
 
     WHERE T3.DocType = 'I' 
-    AND T3.TaxDate BETWEEN @DATEFROM AND  @DATETO
     AND T3.CANCELED='N'
     AND T3.isIns='Y'
+    -- AND T3.TaxDate BETWEEN @DATEFROM AND @DATETO
     AND T3.U_BO_DRS ='N' AND T3.U_BO_DSDD ='N' AND T3.U_BO_DSDV ='N' AND T3.U_BO_DSPD ='N'
     AND T0.Quantity-ISNULL(T7.QTY,0)>0
 
@@ -103,16 +115,22 @@ SELECT
     T0.BaseEntry AS 'Transaction#',
 
     T7.TaxDate AS 'Posting Date',
+    Month(T7.TaxDate) AS 'Month',
+    CONCAT(Month(T7.TaxDate),'G' )AS 'GRSMonth',
+    CONCAT(Month(T7.TaxDate),'Q' )AS 'QMonth',
    
   
     T7.CardName AS 'Customer',
     
-    T0.WhsCode AS 'Whse',
-    T0.OcrCode as Store,
-    T3.BPLName,
+   
+    
+    
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
+    T0.UOMCODE,
+    T0.NumPerMsr,
     
+    IIF(T0.NumPerMsr>1,T0.QUANTITY*T0.NumPerMsr,T0.Quantity) LWST,
     T0.Quantity AS 'Quantity Sold',
     T0.U_GPBD AS 'Price Before Discount',
     T0.PriceAfVAT AS 'Price After Discount',
@@ -128,9 +146,8 @@ SELECT
 
 
     WHERE T3.DocType = 'I' 
-    AND T7.TaxDate BETWEEN @DATEFROM AND  @DATETO
     AND T3.CANCELED='N'
-    -- AND T3.isIns='Y'
+    -- AND T7.TaxDate BETWEEN @DATEFROM AND @DATETO 
 
     UNION ALL --DROPSHIP--DROPSHIP
 
@@ -145,20 +162,43 @@ SELECT
     
     T0.DocEntry AS 'Transaction#',
     T3.DocDate AS 'Posting Date',
+    Month(T3.DocDate) AS 'Month',
+    CONCAT(Month(T3.DocDate),'G' )AS 'GRSMonth',
+    CONCAT(Month(T3.DocDate),'Q' )AS 'QMonth',
     
     
     T3.CardName AS 'Customer',
     
-    T0.WhsCode AS 'Whse',
-    T0.OcrCode as Store,
-    T3.BPLName,
+   
+    
+    
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
+    T0.UOMCODE,
+    T0.NumPerMsr,
     
     -- (T0.Quantity - ISNULL(T11.Quantity,0))
 
     -- AS 'Quantity Sold', 
+    
+    CASE 
+        WHEN T6.Quantity IS NOT NULL 
+        THEN IIF(T6.NumPerMsr>1,(T6.QUANTITY*T6.NumPerMsr),T6.QUANTITY)
+        WHEN T7.ARCNT=1
+        THEN IIF(T7.NumPerMsr>1,(T7.QUANTITY*T7.NumPerMsr),T7.QUANTITY)
+        WHEN T7.ARCNT>1 AND T7.ARLAST=1
+        
+        THEN IIF(T7.NumPerMsr>1,(T7.QUANTITY*T7.NumPerMsr),T7.QUANTITY)-ISNULL((SELECT SUM(QQ) FROM(
+                                SELECT (SELECT SUM(Quantity) FROM INV1 WHERE DocEntry=Z.RefDocNum) AS QQ FROM PCH21 Z 
+                                WHERE DocEntry=T7.DocEntry AND RefObjType=13
+                                and LineNum<>(SELECT MAX(LineNum) FROM PCH21 WHERE DocEntry=Z.DocEntry)
+                                )DDD),0) 
 
+        
+    ELSE     
+    IIF(T0.NumPerMsr>1,(T0.Quantity - ISNULL(T11.Quantity,0))*T0.NumPerMsr,(T0.Quantity - ISNULL(T11.Quantity,0)))
+           
+    END LWST,
      CASE 
         WHEN T6.Quantity IS NOT NULL 
         THEN IIF(T6.NumPerMsr>T0.NumPerMsr,(T6.QUANTITY*T6.NumPerMsr),T6.QUANTITY)
@@ -317,10 +357,10 @@ SELECT
             AS T12 ON T0.DocEntry=T12.DocEntry
 
     WHERE T3.DocType = 'I' 
-    AND T3.DocDate >= @DATEFROM AND T3.DocDate <= @DATETO
     AND T3.CANCELED='N'
     AND T3.ISINS='N'
-    AND  T3.U_BO_DRS ='Y' OR T3.U_BO_DSDD ='Y' OR T3.U_BO_DSDV ='Y' OR T3.U_BO_DSPD ='Y'  
+    -- AND T3.DocDate BETWEEN @DATEFROM AND @DATETO
+    AND T3.U_BO_DRS ='Y' OR T3.U_BO_DSDD ='Y' OR T3.U_BO_DSDV ='Y' OR T3.U_BO_DSPD ='Y'  
 
     UNION ALL --DS PO=AP QTY BALANCE
 
@@ -334,18 +374,25 @@ SELECT
     
     T0.DocEntry AS 'Transaction#',
     T3.DocDate AS 'Posting Date',
+    Month(T3.DocDate) AS 'Month',
+    CONCAT(Month(T3.DocDate),'G' )AS 'GRSMonth',
+    CONCAT(Month(T3.DocDate),'Q' )AS 'QMonth',
     
     
     T3.CardName AS 'Customer',
    
-    T0.WhsCode AS 'Whse',
-    T0.OcrCode as Store,
-    T3.BPLName,
+   
+    
+    
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
+    T0.UOMCODE,
+    T0.NumPerMsr,
+    
     
  
-
+    
+    IIF(T0.NumPerMsr>1,T5.TTLAPQTY*T0.NumPerMsr,T5.TTLAPQTY) LWST,
     T5.TTLAPQTY 
      AS 'Quantity Sold',
 
@@ -431,10 +478,10 @@ SELECT
             AS T12 ON T0.DocEntry=T12.DocEntry
 
     WHERE T3.DocType = 'I' 
-    AND T3.DocDate >= @DATEFROM AND T3.DocDate <= @DATETO
     AND T3.CANCELED='N'
     AND T3.ISINS='N'
-    AND  T3.U_BO_DRS ='Y' OR T3.U_BO_DSDD ='Y' OR T3.U_BO_DSDV ='Y' OR T3.U_BO_DSPD ='Y'  
+    -- AND T3.DocDate BETWEEN @DATEFROM AND @DATETO
+    AND T3.U_BO_DRS ='Y' OR T3.U_BO_DSDD ='Y' OR T3.U_BO_DSDV ='Y' OR T3.U_BO_DSPD ='Y'  
 
 
      UNION ALL --DS AP EXCESS TO PO
@@ -449,17 +496,23 @@ SELECT
     
     T0.DocEntry AS 'Transaction#',
     T3.DocDate AS 'Posting Date',
+    Month(T3.DocDate) AS 'Month',
+    CONCAT(Month(T3.DocDate),'G' )AS 'GRSMonth',
+    CONCAT(Month(T3.DocDate),'Q' )AS 'QMonth',
     
     
     T3.CardName AS 'Customer',
     
-    T0.WhsCode AS 'Whse',
-    T0.OcrCode as Store,
-    T3.BPLName,
+   
+    
+    
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
+    T0.UOMCODE,
+    T0.NumPerMsr,
      
-
+    
+    IIF(T0.NumPerMsr>1,T5.TTLAPQTY*T0.NumPerMsr,T5.TTLAPQTY) LWST,
     T5.TTLAPQTY 
      AS 'Quantity Sold',
 
@@ -550,11 +603,10 @@ SELECT
             AS T12 ON T0.DocEntry=T12.DocEntry
 
     WHERE T3.DocType = 'I' 
-   
-    AND T3.DocDate >= @DATEFROM AND T3.DocDate <= @DATETO
     AND T3.CANCELED='N'
     AND T3.ISINS='N'
-    AND  T3.U_BO_DRS ='Y' OR T3.U_BO_DSDD ='Y' OR T3.U_BO_DSDV ='Y' OR T3.U_BO_DSPD ='Y'  
+    -- AND T3.DocDate BETWEEN @DATEFROM AND @DATETO
+    AND T3.U_BO_DRS ='Y' OR T3.U_BO_DSDD ='Y' OR T3.U_BO_DSDV ='Y' OR T3.U_BO_DSPD ='Y'  
 
     UNION ALL --GOODS ISSUE
 
@@ -564,17 +616,23 @@ SELECT
     
     T0.DocEntry AS 'Transaction#',
     T3.TaxDate AS 'Posting Date',
+    Month(T3.TaxDate) AS 'Month',
+    CONCAT(Month(T3.TaxDate),'G' )AS 'GRSMonth',
+    CONCAT(Month(T3.TaxDate),'Q' )AS 'QMonth',
     
    
     T3.CardName AS 'Customer',
    
-    T0.WhsCode AS 'Whse',
-    T0.OcrCode as Store,
-    T3.BPLName,
+   
+    
+    
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
+    T0.UOMCODE,
+    T0.NumPerMsr,
     
-    --T0.Quantity AS 'Quantity Sold',
+    
+    IIF(T0.NumPerMsr>1,T8.QUANTITY*T0.NumPerMsr,T8.Quantity) LWST,
     T8.Quantity 
         AS 'Quantity Sold',
     --T0.Quantity-ISNULL(T5.QTY,0) AS 'Quantity Sold',
@@ -602,10 +660,9 @@ SELECT
     INNER JOIN OJDT T9 ON T8.DOCENTRY=T9.BaseRef AND T9.TransType =60
 
     WHERE T3.DocType = 'I' 
-    
-    AND T3.DocDate >= @DATEFROM AND T3.DocDate <= @DATETO
     AND T3.CANCELED='N'
-    AND  T3.U_BO_DRS ='Y' OR T3.U_BO_DSDD ='Y' OR T3.U_BO_DSDV ='Y' OR T3.U_BO_DSPD ='Y' 
+    -- AND T3.TaxDate BETWEEN @DATEFROM AND @DATETO
+    AND T3.U_BO_DRS ='Y' OR T3.U_BO_DSDD ='Y' OR T3.U_BO_DSDV ='Y' OR T3.U_BO_DSPD ='Y' 
 
     UNION ALL  --AR CM
 
@@ -615,21 +672,22 @@ SELECT
     
     T0.DocEntry AS 'Transaction#',
     T3.TaxDate AS 'Posting Date',
+    Month(T3.TaxDate) AS 'Month',
+    CONCAT(Month(T3.TaxDate),'G' )AS 'GRSMonth',
+    CONCAT(Month(T3.TaxDate),'Q' )AS 'QMonth',
  
   
     T3.CardName AS 'Customer',
   
-    -- T0.ocrcode AS 'Whse',
-    ISNULL(T0.WhsCode,(SELECT  ProfitCode FROM JDT1 A
-    INNER JOIN  OJDT B ON A.TransId=B.Number AND B.TransType =14
-    WHERE B.BaseRef=T0.DocEntry 
-    and ShortName='RV010-0200-0000')) 
-    AS 'Whse',
-    T0.OcrCode as Store,
-    T3.BPLName,
+   
+    
+    
     T0.ItemCode AS 'Item Code',
     T0.unitMsr AS 'unit',
+    T0.UOMCODE,
+    T0.NumPerMsr,
     
+    IIF(T0.NumPerMsr>1,T0.QUANTITY*T0.NumPerMsr,T0.Quantity)*-1 LWST,
     T0.Quantity * -1 AS 'Quantity Sold',
     T0.U_GPBD AS 'Price Before Discount',
     T0.PriceAfVAT * -1 AS 'Price After Discount',
@@ -730,7 +788,8 @@ SELECT
 
 
     WHERE T3.DocType = 'I' 
-
-    AND T3.TaxDate >= @DATEFROM AND T3.TaxDate <= @DATETO
     AND T3.CANCELED='N'
     AND T0.BaseType<>203
+    -- AND T3.TaxDate BETWEEN @DATEFROM AND @DATETO
+)X 
+-- WHERE [Posting Date] BETWEEN @DATEFROM AND  @DATETO
