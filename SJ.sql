@@ -13,10 +13,6 @@ set @RESULT = replace((@Branch),'ALL BRANCH','')
 
 
 
-
-
-
-
 SELECT DISTINCT
 T2.TransId,
 t0.docnum,
@@ -41,6 +37,7 @@ T0.BPLName
                 (IIF(T0.DpmAmnt>0,((T0.DpmAmnt-t0.VatSum)+t0.DocTotal),((T0.DOCTOTAL+T0.WTSum)-T0.VATSUM) ))*-1
     ) AS 'Net Puchases'
 ,IIF(T0.CANCELED <>'C',T0.DiscSum,T0.DiscSum*-1) AS Discount
+,T1.VatGroup
 ,T0.CtlAccount
 ,T3.AcctName
 FROM OINV T0

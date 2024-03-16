@@ -10,13 +10,13 @@
 
 
 DECLARE 
-@DATEFROM DATE ='2024-01-01', 
-@DATETO DATE ='2024-01-31',
+@DATEFROM DATE ='2024-02-01', 
+@DATETO DATE ='2024-02-29',
 @DEPARTMENT VARCHAR(100)='',
 @CATEGORY VARCHAR(100)='',
 @ITEMNAME VARCHAR(200)='',
 @STORE VARCHAR(50)='nap',
-@SortBy VARCHAR(100)='Total Quantity'
+@SortBy VARCHAR(100)='Total Sales'
   
 
 SET @STORE=REPLACE(REPLACE(@STORE,'ALL (Top from all Store)',''),'ALL (Top per Store)','')
@@ -75,9 +75,11 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T0.OcrCode as Store,
     T3.BPLName,
     T0.ItemCode AS 'Item Code',
-    T0.unitMsr AS 'unit',
+    T1.InvntryUom  AS 'unit',
+    T0.NumPerMsr,
     T0.Dscription AS 'Description',
-    T0.Quantity AS 'Quantity Sold',
+    IIF(T0.NumPerMsr>1,T0.QUANTITY*T0.NumPerMsr,T0.QUANTITY)AS 'Quantity Sold',
+    -- T0.Quantity AS 'Quantity Sold',
     T0.U_GPBD AS 'Price Before Discount',
     T0.PriceAfVAT AS 'Price After Discount',
     T0.INMPrice AS 'Price After Discount(VAT-Ex)',
@@ -120,9 +122,11 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T0.OcrCode as Store,
     T3.BPLName,
     T0.ItemCode AS 'Item Code',
-    T0.unitMsr AS 'unit',
+    T1.InvntryUom AS 'unit',
+    T0.NumPerMsr,
     T0.Dscription AS 'Description',
-    T0.Quantity-ISNULL(T7.QTY,0) AS 'Quantity Sold',
+    IIF(T0.NumPerMsr>1,T0.QUANTITY*T0.NumPerMsr,T0.QUANTITY)AS 'Quantity Sold',
+    AS 'Quantity Sold',
     T0.U_GPBD AS 'Price Before Discount',
     T0.PriceAfVAT AS 'Price After Discount',
     T0.INMPrice AS 'Price After Discount(VAT-Ex)',
@@ -141,10 +145,10 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     INNER JOIN OINV T3 ON T0.DocEntry = T3.DocNum
     INNER JOIN OCRD T4 ON T3.CardCode = T4.CardCode 
     INNER JOIN OJDT T6 ON T0.DocEntry=T6.BaseRef AND T6.TransType =13
-    LEFT JOIN (SELECT SUM(Quantity)AS QTY,A0.BaseEntry,ITEMCODE FROM DLN1 A0 
+    LEFT JOIN (SELECT SUM(Quantity)AS QTY,A0.BaseEntry,ITEMCODE,NumPerMsr FROM DLN1 A0 
                 INNER JOIN ODLN A1 ON A0.DocEntry=A1.DocNum 
                 WHERE CANCELED='N'
-                GROUP BY  A0.BaseEntry ,ItemCode) AS T7 ON T0.DocEntry=T7.BaseEntry
+                GROUP BY  A0.BaseEntry ,ItemCode,NumPerMsr) AS T7 ON T0.DocEntry=T7.BaseEntry
                 AND T7.ItemCode=T0.ItemCode
 
     WHERE T3.DocType = 'I' 
@@ -176,7 +180,8 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T0.OcrCode as Store,
     T3.BPLName,
     T0.ItemCode AS 'Item Code',
-    T0.unitMsr AS 'unit',
+    T1.InvntryUom AS 'unit',
+    T0.NumPerMsr,
     T0.Dscription AS 'Description',
     T0.Quantity AS 'Quantity Sold',
     T0.U_GPBD AS 'Price Before Discount',
@@ -304,7 +309,8 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T0.OcrCode as Store,
     T3.BPLName,
     T0.ItemCode AS 'Item Code',
-    T0.unitMsr AS 'unit',
+    T1.InvntryUom AS 'unit',
+    T0.NumPerMsr,
     T0.Dscription AS 'Description',
     -- (T0.Quantity - ISNULL(T11.Quantity,0))
 
@@ -514,7 +520,8 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T0.OcrCode as Store,
     T3.BPLName,
     T0.ItemCode AS 'Item Code',
-    T0.unitMsr AS 'unit',
+    T1.InvntryUom AS 'unit',
+    T0.NumPerMsr,
     T0.Dscription AS 'Description',
  
 
@@ -651,7 +658,8 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T0.OcrCode as Store,
     T3.BPLName,
     T0.ItemCode AS 'Item Code',
-    T0.unitMsr AS 'unit',
+    T1.InvntryUom AS 'unit',
+    T0.NumPerMsr,
     T0.Dscription AS 'Description', 
 
     T5.TTLAPQTY 
@@ -778,7 +786,8 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T0.OcrCode as Store,
     T3.BPLName,
     T0.ItemCode AS 'Item Code',
-    T0.unitMsr AS 'unit',
+    T1.InvntryUom AS 'unit',
+    T0.NumPerMsr,
     T0.Dscription AS 'Description',
     --T0.Quantity AS 'Quantity Sold',
     T8.Quantity 
@@ -838,7 +847,8 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T0.OcrCode as Store,
     T3.BPLName,
     T0.ItemCode AS 'Item Code',
-    T0.unitMsr AS 'unit',
+    T1.InvntryUom AS 'unit',
+    T0.NumPerMsr,
     T0.Dscription AS 'Description',
     T0.Quantity * -1 AS 'Quantity Sold',
     T0.U_GPBD AS 'Price Before Discount',

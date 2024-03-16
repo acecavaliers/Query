@@ -2,8 +2,8 @@
 
 
 DECLARE @Branch Varchar(10) = 'ALL BRANCH'
-DECLARE @DateFrom Date = '2022-10-01'
-DECLARE @DateTo Date = '2022-12-31'
+DECLARE @DateFrom Date = '2023-01-01'
+DECLARE @DateTo Date = '2023-12-31'
 
 set @branch = replace((@branch),'ALL BRANCH','')
 
