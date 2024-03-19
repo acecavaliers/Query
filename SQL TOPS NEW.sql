@@ -1,14 +1,10 @@
 
-
-
 -- DECLARE @DATEFROM DATE ={?PeriodFrom}, 
 -- @DATETO DATE = {?PeriodTo},
 -- @DEPARTMENT VARCHAR(100)='{?Department}',
 -- @CATEGORY VARCHAR(100)='',
 -- @STORE VARCHAR(50)='{?Store}',
 -- @SortBy VARCHAR(100)='{?SortBy}'
-
-
 
  DECLARE 
  @DATEFROM DATE ='2024-02-01', 

@@ -1,0 +1,963 @@
+select  * 
+From `director` where dirname like '%buildmore%'
+
+select  * 
+From brand
+where brand like '%powerhouse r%'
+
+select   * 
+From `cusdr`	
+
+
+
+select  * 
+From cusinvi A
+INNER JOIN `cusinv` B ON B.`id`=A.`cicode`
+
+
+
+
+SELECT dirname,crdate,c.icode ,c.item
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`cusdrid` 
+inner join items c on b.`crpono`=c.`icode`
+inner join director e on e.dirid=b.crcuno
+where b.crdate between '2016-01-01' and '2016-12-31'
+and e.dirname like '%buildmore const%'
+
+
+
+INSERT INTO items (icode,item)
+select c.`pdno`,concat(d.`brand`,' ', c.`size`) from size c 
+inner join brand d on d.`brandid`=c.`scode` 
+--where pdno=5041
+
+
+
+SELECT dirname,crdate
+,(select item from `items`  where icode=b.`crpono`)
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`cusdrid` 
+inner join director e on e.dirid=b.crcuno
+where b.crdate between '2014-01-01' and '2023-12-31'
+--and d.brand like '%powerhouse%'
+and e.dirname like '%buildmore const%'
+--group by c.`pdno`
+
+
+SELECT dirname,crdate,crinvno,crprono
+,(select item from `items`  where icode=a.`crprono`)
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`cusdrid` 
+inner join director e on e.dirid=b.crcuno
+/*inner join items f on f.`icode`=a.`crprono`*/
+
+where CAST( b.crdate AS DATE) between '2012-01-01' and '2018-12-31'
+and e.dirname like '%buildmore%'
+
+--and f.`item` like '%powerhouse%'
+--group by c.`pdno`
+
+
+
+select * from `items`  where `item`  like '%powerhouse%'
+
+select * from `cusdri`  where `crprono`  =91640
+
+
+
+
+
+
+
+
+
+
+
+SELECT crdate,c.pdno ,concat(d.`brand`,' ', c.`size`) as Description, sum(a.crqty) AS TOTALQTY, 
+COUNT(a.`crprono`)AS PDNOCNT , ROUND(sum(a.crqty) / COUNT(a.`crprono`),2)AS AVGSOLD
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`cusdrid` 
+inner join size c on a.`crprono`=c.`pdno`
+inner join brand d on c.`scode`=d.`bcode`
+where b.crdate between '2023-01-01' and '2023-08-31'
+group by c.`pdno`
+
+SELECT crdate,crpono ,c.item as Description, sum(a.crqty) AS TOTALQTY, 
+COUNT(a.`crprono`)AS PDNOCNT , ROUND(sum(a.crqty) / COUNT(a.`crprono`),2)AS AVGSOLD
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`cusdrid` 
+inner join `items` c on b.`crpono`=c.`icode`
+where b.crdate between '2023-01-01' and '2023-08-31'
+group by c.`icode`
+
+
+
+
+
+
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%GORILLA%'
+
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%METABO%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%TOMOWELD%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%YALE%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%SHERA%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%NIPPON%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%SAN PEDRO%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%STELLAR%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%GATEMAN%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%ENERGIZER%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%MAX RIDER%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%ECOLINK%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%STANLEY%'
+union ALL
+
+SELECT 
+t1.pdno as PDNO,brand as ItemDescription, size	
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where brand like '%DEWALT%'
+
+
+INSERT INTO items (icode,item)
+select c.`pdno`,concat(d.`brand`,' ', c.`size`) from size c 
+inner join brand d on d.`brandid`=c.`scode` 
+--where pdno=5041
+
+
+CREATE TABLE items2 (
+  `icode` varchar(100) default NULL,
+  `pdno` varchar(100) default NULL,
+  `item` varchar(200) default NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE INVOICES (
+  `DATE` date default NULL NULL,
+  `CICODE` varchar(50) default NULL,
+  `QTY` DECIMAL(18,2) default NULL,
+  `PDCNT` DECIMAL(18,2) default NULL,
+  `AVGSOLD`  DECIMAL(18,2) default NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE Regine2 (	
+  `TransType` varchar(50) default NULL,
+  `DATE` date default NULL NULL,
+  `PDNO` varchar(50) default NULL,
+  `Description` varchar(200) default NULL,
+  `Unit` varchar(50) default NULL,
+  `QTY_TOTAL` DECIMAL(18,2) default NULL,
+  `PRICE` DECIMAL(18,2) default NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+select * from items where icode=30916
+
+
+SELECT *,GROUP_CONCAT(DISTINCT CONCAT(MONTHNAME(DATE), ' ', YEAR(DATE)) ORDER BY YEAR(DATE), MONTH(DATE) SEPARATOR ', ') AS months_sold
+FROM (
+    SELECT *,SUM(QTY_TOTAL), MONTH(DATE) AS month, YEAR(DATE) AS year
+    FROM sales_generated
+    GROUP BY PDNO, MONTH(DATE), YEAR(DATE)
+    HAVING COUNT(*) >= 1
+) AS t1
+
+WHERE EXISTS (
+    SELECT 1
+    FROM (
+          SELECT *, MONTH(DATE) AS month, YEAR(DATE) AS year
+    FROM sales_generated
+    GROUP BY PDNO, MONTH(DATE), YEAR(DATE)
+    HAVING COUNT(*) >= 1
+    ) AS t2
+    WHERE t1.PDNO = t2.PDNO
+        AND t1.month = t2.month + 1
+ )  
+ group by PDNO
+ 
+ 
+  and EXISTS (
+    SELECT 1
+    FROM (
+          SELECT *, MONTH(DATE) AS month, YEAR(DATE) AS year
+    FROM sales_generated
+    GROUP BY PDNO, MONTH(DATE), YEAR(DATE)
+    HAVING COUNT(*) >= 1
+    ) AS t3
+    WHERE t1.PDNO = t3.PDNO
+        AND t1.month = t3.month + 2
+)
+
+
+select distinct ciunit, ciprono
+from cusinvi
+where ciunit like '%/%'
+
+
+select * from items where icode=3171
+
+SELECT 
+  `DATE`,
+  `PDNO`,
+  `Description`
+FROM 
+  `sales_generated`
+WHERE
+	Description like '%Shark%'  
+AND PDNO=3896
+  ;
+
+
+SELECT PDNO,Description,
+(select SUM(QTY_TOTAL) from sales_generated where pdno=T0.pdno) AS TOTAL_QTY,
+PDNO_COUNT,
+(select SUM(QTY_TOTAL) from sales_generated where pdno=T0.pdno)/PDNO_COUNT as avg,
+(select GROUP_CONCAT(DATE) from sales_generated where pdno=T0.pdno)as mns
+--(select count(DATE) from sales_generated where pdno=T0.pdno) AS CNT
+
+FROM   `sales_generated` T0
+WHERE 
+(select GROUP_CONCAT(DATE) from sales_generated where pdno=T0.pdno)
+in ('1,2,3,4,5,6,7,8,9,10,11,12')
+--,'1,2,3,4,5,6,7,8,9,10,11','1,2,3,4,5,6,7,8,9,10','1,2,3,4,5,6,7,8,9','1,2,3,4,5,6,7,8','2,3,4,5,6,7,8,9,10,11,12','3,4,5,6,7,8,9,10,11,12','4,5,6,7,8,9,10,11,12','5,6,7,8,9,10,11,12')
+--PDNO_COUNT>5
+GROUP BY PDNO
+order by DATE ,PDNO
+
+
+UPDATE 
+  `sales_generated`  T0
+SET   
+  `PDNO_COUNT` = (select count(DATE) from sales_generated where pdno=T0.pdno),
+ 
+WHERE 
+;
+
+
+ SELECT 
+ cidate,
+  `ciunit`,
+  `ciprono`,item
+from `cusinvi` a
+inner join `cusinv` b on b.`id`=floor(a.cicode)
+inner join items c on c.`icode`=a.`ciprono`
+where ciunit in ('D','dz.','doz','dp','dp.',
+'c','hun',
+'g','gr.','grs',
+'m','thd')
+and `cidate` >= '2022-01-01'and `cidate` <=  '2022-12-31'
+
+
+
+--INSERT INTO INVOICES (`DATE`,`CICODE`,`QTY`,`PDCNT`,`AVGSOLD`)
+
+
+INSERT INTO sales_generated (DATE,PDNO,Description,QTY_TOTAL,PDNO_COUNT,SOLD_AVG,PRICE) 
+
+select  MONTH(ddate)as Month , prono,item, max(qq)as maxQTY,'','',ddate
+
+ FROM(
+SELECT cidate as ddate,ciprono as prono , ciqty,ciunit,
+
+case WHEN ciunit ='4/1' then 4*ciqty
+when ciunit ='6/1' then 6*ciqty
+when ciunit ='2/1' then 2*ciqty
+when ciunit in ('D','DZ.','DOZ','DP','DP.')then 12*ciqty
+when ciunit in ('C','HUN')then 100*ciqty
+when ciunit in ('G','GR.','GRS')then 144*ciqty
+when ciunit in ('M','THD')then 1000*ciqty
+when REGEXP_REPLACE(ciunit, '[^0-9]+', '') ='' then ciqty else REGEXP_REPLACE(ciunit, '[^0-9]+', '') *ciqty
+end as qq,ciprice*ciqty
+
+from `cusinvi` a
+inner join `cusinv` b on b.`id`=floor(a.cicode)
+where  `cidate` >= '2023-01-01'and `cidate` <=  '2023-09-09'
+
+
+union all
+
+SELECT crdate as ddate,crprono as prono , crqty,crunit,
+
+case WHEN crunit ='4/1' then 4*crqty
+when crunit ='6/1' then 6*crqty
+when crunit ='2/1' then 2*crqty
+when crunit in ('D','DZ.','DOZ','DP','DP.')then 12*crqty
+when crunit in ('C','HUN')then 100*crqty
+when crunit in ('G','GR.','GRS')then 144*crqty
+when crunit in ('M','THD')then 1000*crqty
+when REGEXP_REPLACE(crunit, '[^0-9]+', '') ='' then crqty else REGEXP_REPLACE(crunit, '[^0-9]+', '') *crqty
+end as qq
+
+from `cusdri` a
+inner join `cusdr` b on b.`cusdrID`=floor(a.crcode)
+where  `crdate` >= '2023-01-01'and `crdate` <=  '2023-09-09'
+
+union all
+
+SELECT srdate as ddate,srprono as prono , srqty,srunit,
+
+case WHEN srunit ='4/1' then 4*srqty
+when srunit ='6/1' then 6*srqty
+when srunit ='2/1' then 2*srqty
+when srunit in ('D','DZ.','DOZ','DP','DP.')then 12*srqty
+when srunit in ('C','HUN')then 100*srqty
+when srunit in ('G','GR.','GRS')then 144*srqty
+when srunit in ('M','THD')then 1000*srqty
+when REGEXP_REPLACE(srunit, '[^0-9]+', '') ='' then srqty else REGEXP_REPLACE(srunit, '[^0-9]+', '') *srqty
+end as qq,
+
+
+from `salreti` a
+inner join `salret` b on b.`SALRETID`=floor(a.srcode)
+where  `srdate` >= '2023-01-01'and `srdate` <=  '2023-09-09'
+
+
+)ssss
+inner join items c on c.`icode`=ssss.`prono`
+and  prono=3896
+group by prono, MONTH(ddate) 
+order by MONTH(ddate) ,prono
+
+
+
+
+CREATE TABLE Regine (	
+  `TransType` varchar(50) default NULL,
+  `DATE` date default NULL NULL,
+  `PDNO` varchar(50) default NULL,
+  `Description` varchar(200) default NULL,
+  `QTY_TOTAL` DECIMAL(18,2) default NULL,
+  `PDNO_COUNT` DECIMAL(18,2) default NULL,
+  `SOLD_AVG`  DECIMAL(18,2) default NULL,
+  `PRICE` DECIMAL(18,2) default NULL
+
+--SALES PER ITEM
+--SALES PER ITEM
+--SALES PER ITEM
+
+
+--INSERT INTO Regine (TransType,DATE,PDNO,Description,QTY_TOTAL,PDNO_COUNT,SOLD_AVG,PRICE)
+ 
+SELECT TransType,ddate,prono,ITEM,Qty,Unit,Price,AMT FROM(
+	SELECT 'CASH' AS TransType,cidate as ddate,ciprono as prono , ciqty as Qty,
+	ciprice*ciqty AS AMT,ciunit as Unit,ciprice as Price
+	from `cusinvi` a
+	inner join `cusinv` b on b.`id`=floor(a.cicode)
+	where  `cidate` >= '2023-01-01'and `cidate` <=  '2023-09-09'
+
+	union all
+
+	SELECT 'CHARGE' AS TransType,crdate as ddate,crprono as prono , crqty as Qty,
+	crprice*crqty AS AMT,crunit as Unit,crprice as Price
+	from `cusdri` a
+	inner join `cusdr` b on b.`cusdrID`=floor(a.crcode)
+	where  `crdate` >= '2023-01-01'and `crdate` <=  '2023-09-09'
+
+	union all
+
+	SELECT 'CM' AS TransType,srdate as ddate,srprono as prono , srqty as Qty,
+	(srprice*srqty)*-1 AS AMT,srunit as Unit,srprice as Price
+	from `salreti` a
+	inner join `salret` b on b.`SALRETID`=floor(a.srcode)
+	where  `srdate` >= '2023-01-01'and `srdate` <=  '2023-09-09'
+    
+)XX
+inner join items c on c.`icode`=XX.`prono`
+ORDER BY XX.ddate
+LIMIT 0, 100
+
+SELECT top 100 * FROM(
+SELECT Description,SUM(QTY_TOTAL)AS 'TOTAL QTY SOLD',SUM(PRICE)AS 'TOTAL AMOUNT SOLD' FROM Regine
+GROUP BY PDNO
+)
+ORDER BY 'TOTAL AMOUNT SOLD' desc
+
+
+
+
+SELECT crdate AS DD,C.`icode`AS pdno,C.`item` as Description, 
+crqty*crprice
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`cusdrID` 
+inner join items C on C.`icode`=a.`crprono`
+where b.crdate LIKE '%2023%' 
+
+
+
+SELECT crdate AS DD,C.`icode`AS pdno,C.`item` as Description, 
+crqty*crprice
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`cusdrID` 
+inner join items C on C.`icode`=a.`crprono`
+where b.crdate between '2023-01-01' and '2023-09-09'
+and crprono=33911
+group by crprono
+
+
+select *,crqty*crprice from cusdri
+
+
+
+
+--INSERT INTO sales_generated (DATE,PDNO,Description,QTY_TOTAL,PDNO_COUNT,SOLD_AVG) 
+--///GENERATE AVG TOTAL
+
+SELECT  DD,PDNO,Description,SUM(TOTALQTY) AS QTY_TOTAL,SUM(PDNOCNT)AS PDNO_COUNT,ROUND(SUM(AVGSOLD),2)AS SOLD_AVG
+FROM (
+SELECT crdate AS DD,C.`icode`AS pdno,C.`item` as Description, 
+case WHEN crunit ='4/1' then 4*MAX(crqty)
+when crunit ='6/1' then 6*MAX(crqty)
+when crunit ='2/1' then 2*MAX(crqty)
+when REGEXP_REPLACE(crunit, '[^0-9]+', '') ='' then MAX(crqty) else REGEXP_REPLACE(crunit, '[^0-9]+', '') *MAX(crqty) 
+end  TOTALQTY,
+0 AS PDNOCNT , 0 AS AVGSOLD
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`cusdrID` 
+inner join items C on C.`icode`=a.`crprono`
+where b.crdate between '2022-01-01' and '2022-12-31'
+and crprono=33911
+group by crprono
+
+UNION ALL
+
+SELECT DATE  AS DD,B.`icode`AS pdno,B.`item`,A.QTY,A.PDCNT,A.AVGSOLD FROM INVOICES A
+inner join items B on B.`icode`=a.`CICODE`
+
+--UNION ALL
+
+--Salret & Salreti CM
+--SELECT srdate  AS DD,C.`icode` AS pdno,C.`item` as Description, sum(a.srqty) AS TOTALQTY, 
+--COUNT(a.`srprono`)AS PDNOCNT , ROUND(sum(a.srqty) / COUNT(a.`srprono`),2)AS AVGSOLD
+--FROM `salreti` A
+--INNER JOIN `salret` B ON B.`salretID`=FLOOR(A.`srcode`)
+--inner join items C on C.`icode`=a.`srprono`
+--where  b.`srdate` between '2022-01-01' and '2022-12-31'
+--group by srprono
+)XX
+GROUP BY PDNO,MONTH(DD)
+
+--////END
+
+
+INSERT INTO items (icode,item)
+select c.`pdno`,concat(d.`brand`,' ', c.`size`) from size c 
+inner join brand d on d.`brandid`=c.`scode` 
+--where pdno=5041
+
+
+select * from size where scode>0 order by scode
+
+
+--INSERT INTO INVOICES (`DATE`,`CICODE`,`QTY`,`PDCNT`,`AVGSOLD`)
+SELECT cidate,ciprono ,
+max(ciqty) AS TOTALQTY, 
+COUNT(a.`ciprono`)AS PDNOCNT , ROUND(sum(a.ciqty) / COUNT(a.`ciprono`),2)AS AVGSOLD,
+YEAR(cidate) AS year, MONTH(cidate) as month
+from `cusinvi` a
+inner join `cusinv` b on b.`id`=floor(a.cicode)
+--inner join items c on c.`icode`=a.`ciprono`
+where  `cidate` between '2022-01-01' and '2022-12-31'
+group by ciprono,year, month
+order by cidate
+
+
+--select cidate from `cusinv` WHERE DATE_FORMAT(cidate, '%Y-%m') LIKE '2022-03'
+select ciprono,Mons, MAX(qty) FROM(
+SELECT a.`crprono` as ciprono,DATE_FORMAT(crdate, '%Y-%m')AS Mons,MAX(CrQTY)as qty
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`cusdrID` 
+where  `crdate` between '2022-01-01' and '2022-12-31'
+GROUP BY  ciprono
+
+UNION ALL
+
+SELECT a.`ciprono` as ciprono,DATE_FORMAT(cidate, '%Y-%m')AS Mons,MAX(CIQTY)as qty
+from `cusinvi` a
+inner join `cusinv` b on b.`id`=floor(a.cicode)
+where  `cidate` between '2022-01-01' and '2022-12-31'
+GROUP BY  ciprono
+)xx
+group by ciprono ,mons
+order by mons
+
+
+----March 223
+select ciprono,Mons,item, TOTALQTY FROM(
+SELECT a.`crprono` as ciprono,DATE_FORMAT(crdate, '%Y-%m')AS Mons,
+case WHEN crunit ='4/1' then 4*MAX(crqty)
+when crunit ='6/1' then 6*MAX(crqty)
+when crunit ='2/1' then 2*MAX(crqty)
+when REGEXP_REPLACE(crunit, '[^0-9]+', '') ='' then MAX(crqty) else REGEXP_REPLACE(crunit, '[^0-9]+', '') *MAX(crqty) 
+end  as TOTALQTY
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`cusdrID` 
+where  `crdate` between '2022-01-01' and '2022-12-31'
+GROUP BY  ciprono
+
+UNION ALL
+
+SELECT a.`ciprono` as ciprono,DATE_FORMAT(cidate, '%Y-%m')AS Mons,ciqty,
+case 
+when REGEXP_REPLACE(ciunit, '[^0-9]+', '') ='' then MAX(ciqty) 
+else REGEXP_REPLACE(ciunit, '[^0-9]+', '') *(ciqty) 
+end as TOTALQTY,ciqty,REGEXP_REPLACE(ciunit, '[^0-9]+', '') *(ciqty) 
+from `cusinvi` a
+inner join `cusinv` b on b.`id`=floor(a.cicode)
+
+where  `cidate` between '2022-01-01' and '2022-12-31'
+and ciprono=33911
+GROUP BY ciprono
+)xx
+inner join items C on C.`icode`=xx.ciprono
+where ciprono=33911
+group by ciprono,mons
+order by mons
+
+
+
+select * from items where icode='3391'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--Total Cusdr & Cusdri
+SELECT crdate,c.pdno ,concat(d.`brand`,' ', c.`size`) as Description, sum(a.crqty) AS TOTALQTY, 
+COUNT(a.`crprono`)AS PDNOCNT , ROUND(sum(a.crqty) / COUNT(a.`crprono`),2)AS AVGSOLD
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`entryno` 
+inner join size c on b.`crpono`=c.`pdno`
+inner join brand d on c.`scode`=d.`scode`
+where b.crdate between '2020-01-01' and '2020-12-31'
+group by c.`pdno`
+
+--Total Cusdr & Cusdri Details
+SELECT crdate,B.`entryno`,c.pdno ,concat(d.`brand`,' ', c.`size`)as Description, a.crqty as QTY
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`entryno` 
+inner join size c on b.`crpono`=c.`pdno`
+inner join brand d on c.`scode`=d.`scode`
+--where b.crdate between '2020-01-01' and '2020-12-31'
+WHERE YEAR(B.`crdate`)=2020
+
+--Salret & Salreti
+SELECT SRDATE,C.`pdno`,CONCAT(D.`brand`,' ', C.`size`)AS DESCRIPTION, SUM(A.`srqty`)* -1 AS TOTALQTY,
+COUNT(a.`srprono`)* -1 AS PDNOCNT , ROUND(sum(a.srqty)* -1 / COUNT(a.`srprono`)* -1,2)AS AVGSOLD
+FROM `salreti` A
+INNER JOIN `salret` B ON B.`entryno`=FLOOR(A.`srcode`)
+INNER JOIN `size` C ON A.`srprono`=C.`pdno`
+INNER JOIN `brand` D ON C.`scode`=D.`scode`
+group by c.`pdno`
+
+SELECT A.`srcode`
+FROM `salreti` A
+INNER JOIN `salret` B ON B.`entryno`=FLOOR(A.`srcode`)
+
+SELECT * 
+FROM `masterdata`
+WHERE PDNO=31826
+
+SELECT *
+FROM `sapmasterlist`
+ORDER BY PDNO
+
+--BRAND SIZE
+SELECT *
+FROM SALRET
+
+SELECT PDNO,CONCAT(B.BRAND, ' ' , A.SIZE)
+FROM `size` A
+INNER JOIN BRAND B ON A.`scode`=B.SCODE
+
+--test
+select sum(a.ciqty)
+from `cusinvi` a
+inner join `cusinv` b on b.`entryno`=floor(a.cicode)
+inner join size c on c.`pdno`=a.`ciprono`
+inner join brand d on d.`scode`=c.`scode`
+where c.`pdno`=30872
+order by c.`pdno`
+
+select count(floor(cicode)), ciname,b.`ciinvno`, b.`cidate`
+from `cusinvi` a
+inner join `cusinv` b on b.`entryno`=floor(a.cicode)
+where b.`entryno`=floor(a.cicode)
+group by b.`entryno`
+
+select date_format(str_to_date(Srdate,  '%d/%m/%Y'), '%Y-%m-%d')
+FROM `SALRET`
+
+UPDATE SALRET SET `Srdate` = date_format(str_to_date(Srdate,  '%d/%m/%Y'), '%Y-%m-%d')
+
+
+
+select *from brand
+
+select  * 
+From salreti
+
+select  * 
+From salret
+
+
+
+select  * 
+From salreti A
+INNER JOIN `salret` B ON B.`salretid`=A.`srcode`
+
+
+SELECT  cidate,PNO,Description,SUM(TOTALQTY),SUM(PDNOCNT),SUM(AVGSOLD)
+FROM (
+--Total Sold CASH
+select cidate,c.`pdno`AS PNO,concat(d.`brand`,' ', c.`size`) as Description, sum(a.ciqty)AS TOTALQTY, 
+COUNT(a.ciprono)AS PDNOCNT, ROUND(sum(a.ciqty) / COUNT(a.ciprono),2) AS AVGSOLD
+from `cusinvi` a
+inner join `cusinv` b on b.`entryno`=floor(a.cicode)
+inner join size c on c.`pdno`=a.`ciprono`
+inner join brand d on d.`scode`=c.`scode`
+where b.`cidate` between '2020-01-01' and '2020-12-31' 
+group by c.`pdno`
+
+UNION ALL
+--CHARGE
+SELECT crdate,c.pdno as PNO,concat(d.`brand`,' ', c.`size`) as Description, sum(a.crqty)AS TOTALQTY, 
+COUNT(a.`crprono`)AS PDNOCNT, ROUND(sum(a.crqty) / COUNT(a.`crprono`),2) AS AVGSOLD
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`entryno` 
+inner join size c on b.`crpono`=c.`pdno`
+inner join brand d on c.`scode`=d.`scode`
+where b.crdate between '2020-01-01' and '2020-12-31'
+group by c.`pdno`
+
+UNION ALL
+
+--Salret & Salreti CM
+SELECT SRDATE,C.`pdno`as PNO,CONCAT(D.`brand`,' ', C.`size`)AS DESCRIPTION, SUM(A.`srqty`)* -1 AS TOTALQTY,
+COUNT(a.`srprono`)* -1 AS PDNOCNT , ROUND(sum(a.srqty)* -1 / COUNT(a.`srprono`)* -1,2)AS AVGSOLD
+FROM `salreti` A
+INNER JOIN `salret` B ON B.`salretid`=FLOOR(A.`srcode`)
+INNER JOIN `size` C ON A.`srprono`=C.`pdno`
+INNER JOIN `brand` D ON C.`scode`=D.`bcode`
+where b.srdate between '2023-01-01' and '2023-08-31'
+group by c.`pdno`
+) `x`
+GROUP BY PNO
+--
+--
+--///GENERATE AVG TOTAL
+SELECT  cidate,Description,SUM(TOTALQTY) AS QTY_TOTAL,SUM(PDNOCNT)AS PDNO_COUNT,ROUND(SUM(AVGSOLD),2)AS SOLD_AVG
+FROM (
+--Total Sold CASH
+select cidate,a.CIPRONO as 'pdno',concat(d.`brand`,' ', c.`size`) as Description--, sum(a.ciqty)AS TOTALQTY, 
+-COUNT(a.ciprono)AS PDNOCNT, sum(a.ciqty) / COUNT(a.ciprono) AS AVGSOLD
+from `cusinvi` a
+inner join `cusinv` b on b.`id`=floor(a.cicode)
+inner join size c on c.`pdno`=a.`ciprono`
+inner join brand d on d.`bcode`=c.`scode`
+--inner join `sapmasterlist` E ON A.CIPRONO=E.PDNO
+where  b.`cidate` between '2022-01-01' and '2022-12-31'
+--group by e.`pdno`
+group by a.CIPRONO
+
+UNION ALL
+--CHARGE
+SELECT crdate,a.crprono as 'pdno',concat(d.`brand`,' ', c.`size`) as Description, sum(a.crqty)AS TOTALQTY, 
+COUNT(a.`crprono`)AS PDNOCNT, sum(a.crqty) / COUNT(a.`crprono`) AS AVGSOLD
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`cusdrID` 
+inner join size c on b.`crpono`=c.`pdno`
+inner join brand d on c.`scode`=d.`bcode`
+--inner join `sapmasterlist` e on a.crprono=e.pdno
+where b.crdate between '2022-01-01' and '2022-12-31'
+--group by e.`pdno`  a.crprono=e.pdno and 
+group by a.crprono
+
+UNION ALL
+
+--Salret & Salreti CM
+SELECT SRDATE,a.SRPRONO as 'pdno',CONCAT(D.`brand`,' ', C.`size`)AS DESCRIPTION, SUM(A.`srqty`)* -1 AS TOTALQTY,
+COUNT(a.`srprono`)* -1 AS PDNOCNT ,sum(a.srqty)* -1 / COUNT(a.`srprono`)* -1 AS AVGSOLD
+FROM `salreti` A
+INNER JOIN `salret` B ON B.`salretID`=FLOOR(A.`srcode`)
+INNER JOIN `size` C ON A.`srprono`=C.`pdno`
+INNER JOIN `brand` D ON C.`scode`=D.`bcode`
+--inner join `sapmasterlist` E ON A.SRPRONO=E.PDNO
+where  b.`srdate` between '2022-01-01' and '2022-12-31'
+--group by E.`pdno`
+group by A.SRPRONO
+) `x`
+GROUP BY pdno
+
+--///END--
+--
+--
+--///GENERATE TOTAL DETAILS
+SELECT  DATE, ENTRYNO, PDNO, Description, QTY
+FROM (
+--Total Sold Details
+select cidate AS DATE,b.`entryno` AS ENTRYNO,c.`pdno` AS PDNO,concat(d.`brand`,' ', c.`size`) as Description, a.`ciqty` AS QTY
+from `cusinvi` a
+inner join `cusinv` b on b.`entryno`=floor(a.cicode)
+inner join size c on c.`pdno`=a.`ciprono`
+inner join brand d on d.`scode`=c.`scode`
+inner join `sapmasterlist` e on a.ciprono=e.pdno
+where a.ciprono=e.pdno and b.`cidate` between '2020-01-01' and '2020-12-31'
+
+--order by cidate
+
+UNION ALL
+--Total Cusdr & Cusdri Details 
+SELECT crdate AS DATE,B.`entryno` AS ENTRYNO,c.pdno AS PDNO,concat(d.`brand`,' ', c.`size`) as Description, a.crqty AS QTY
+FROM `cusdri` a
+inner join cusdr b on FLOOR(a.`crcode`)=b.`entryno` 
+inner join size c on b.`crpono`=c.`pdno`
+inner join brand d on c.`scode`=d.`scode`
+inner join `sapmasterlist` e on a.crprono=e.pdno
+where a.crprono=e.pdno and b.crdate between '2020-01-01' and '2020-12-31'
+
+UNION ALL
+--SALES RETURN Details
+SELECT Srdate AS DATE,B.`entryno` AS ENTRYNO,c.pdno AS PDNO,concat(d.`brand`,' ', c.`size`) as Description, a.Srqty * -1  AS QTY
+FROM `salreti` A
+INNER JOIN `salret` B ON B.`entryno`=FLOOR(A.`srcode`)
+INNER JOIN `size` C ON A.`srprono`=C.`pdno`
+INNER JOIN `brand` D ON C.`scode`=D.`scode`
+inner join `sapmasterlist` e on a.srprono=e.pdno
+where a.srprono=e.pdno and b.`srdate` between '2020-01-01' and '2020-12-31'
+--AND PDNO=3108
+)`x`
+order by PDNO
+--///END--
+
+
+--Generate Price List--
+
+SELECT A.`ITEMCODE`, A.`PDNO`,A.`ITEMNAME`,B.`TCODE` AS COST,B.`UM` AS UOM, B.`RPERC` AS SRP_MRK_UP, B.`RETAIL` AS SRP
+FROM `sapmasterlist` A
+INNER JOIN `masterdata` B ON A.`PDNO`=B.`PDNO`
+WHERE B.`RPERC`>0
+
+
+
+SELECT A.`ITEMCODE`, A.`PDNO`,A.`ITEMNAME`,B.`TCODE` AS COST,B.`UM` AS UOM, B.`RPERC` AS SRP_MRK_UP,CASE
+when rperc=0 then GREATEST(whole1,whole2,whole3)
+end AS SRP 
+FROM `sapmasterlist` A
+INNER JOIN `masterdata` B ON A.`PDNO`=B.`PDNO`
+WHERE B.`RPERC`=0
+
+
+select pdno,tcode,retail,
+CASE
+when rperc=0 then GREATEST(whole1,whole2,whole3)
+end AS biggest
+from masterdata 
+where PDNO =29711
+
+SELECT 
+t1.pdno as PDNO, t0.brand, t1.size, concat(t0.brand,' ', t1.size)as ItemDescription, t1.retail, t1.ru as UOM, t1.Soh
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.SCODE = T1.SCODE
+
+select * from director_new
+
+select a.id ,a.srdate,a.`srinvno`,b.`srqty`,b.`srprice`,b.`srunit`,concat(d.brand,' ', c.size)as Description
+from salret a
+inner join salreti b on a.id = truncate(b.srcode,0)
+inner join size c on b.`srprono` = c.pdno
+INNER JOIN Brand d on c.scode = d.scode
+where (YEAR(a.`srdate`)=2021)
+order by a.srdate
+
+select * from `accrec` where arcuno =9650
+select * from `director` where dirname like'%SOUTHERN PINE CONSTRUCTION COMPANY, INC.%'
+
+SELECT T0.dirID AS DIRID, T0.DIRINIT, T0.DIRNAME, T1.ARDATE, T1.ARREF, T1.ARPONO, T1.ARAMOUNT, T1.ARPOST, T1.ARCUSDR
+ FROM `director` T0
+ INNER JOIN ACCREC T1 ON T0.`dirID` = T1.ARCUNO
+ where dirname like'%SOUTHERN PINE CONSTRUCTION COMPANY, INC.%'
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ ---- ITEM MASTER LIST
+ SELECT 
+t1.pdno as PDNO, t0.brand, t1.size, concat(t0.brand,' ', t1.size)as ItemDescription, t1.ru as UOM, t1.Soh,t1.d1 AS 'Base Price', t1.retail AS 'RETAIL PRICE'
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.SCODE = T1.SCODE
+where t0.brand like '%wishing%'
+
+
+
+
+SELECT T0.dirID AS DIRID, T0.DIRNAME, T1.ARDATE, T1.ARREF, T1.ARPONO, T1.ARAMOUNT, T1.ARPOST, T1.ARCUSDR --,t0.`dirbalance`
+FROM `director` T0
+INNER JOIN ACCREC T1 ON T0.`dirID` = T1.ARCUNO
+where dirname like'%SOUTHERN PINE CONSTRUCTION COMPANY, INC.%'
+order by ARDATE
+
+
+
+SELECT T0.dirID AS DIRID, T0.DIRNAME, T1.ARDATE, T1.ARCUSDR AS 'ENTRY NO', T1.ARREF, T1.ARPONO, case when T1.ARAMOUNT<0 then T1.ARAMOUNT else ''END as 'PAID/CM/ADJ'
+,case when T1.ARAMOUNT>=0 then T1.ARAMOUNT else ''END as 'BALANCE'
+FROM `director` T0
+INNER JOIN ACCREC T1 ON T0.`dirID` = T1.ARCUNO
+where dirname like'%SOUTHERN PINE CONSTRUCTION COMPANY, INC.%'
+order by ARDATE
+
+select * from size	
+
+select * from(
+SELECT 
+t1.pdno as PDNO,REPLACE(concat(REPLACE(REPLACE(t0.brand,'?',''),'-',''),' ', t1.size),"'","")as ItemDescription, 
+t1.Soh, t1.retail AS 'RETAIL',t1.ru as UOM, t1.WHOLE1 as 'wholesale',T1.W1U as 'WU',WHOLE2 as 'd1',W2U as 'D1U', WHOLE3 as 'd2',W3U as 'D2U',AVECOST,t1.tcode
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+)xxx
+where ItemDescription in ( 'NIPPON FLATWALL ENAMEL STD 1LTR'
+,'NIPPON FLATWALL ENAMEL STD 4LTR'
+,'NIPPON LACQUER FLO #1LTR'
+,'NIPPON PYLOX LAZER SPRAY PAINT 400CC # 02 - Gloss White'
+,'NIPPON PYLOX LAZER SPRAY PAINT 400CC # 22 - Sky Blue')
+
+
+select * from(
+SELECT 
+t1.pdno as PDNO,REPLACE(concat(REPLACE(REPLACE(t0.brand,'?',''),'-',''),' ', t1.size),"'","")as ItemDescription, 
+t1.Soh, t1.retail AS 'RETAIL',t1.ru as UOM, t1.WHOLE1 as 'wholesale',T1.W1U as 'WU',WHOLE2 as 'd1',W2U as 'D1U', WHOLE3 as 'd2',W3U as 'D2U',AVECOST as 'Cost,t1.tcode
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+)xxx
+where ItemDescription in (
+'NIPPON LACQUER THINNER #4LTR (GAL)'
+,'NIPPON EPOXY PRIMER STD 1LTR GRAY W/HARDENER'
+,'NIPPON EPOXY PRIMER STD 1LTR WHITE W/HARDENEr'
+,'NIPPON EPOXY PRIMER STD 4LTRS GRAY W/HARDENER'
+,'NIPPON EPOXY PRIMER STD 4LTRS WHITE W/HARDENER'
+,'NIPPON CLEAR GLOSS LACQUER #1LTR'
+,'NIPPON CLEAR GLOSS LACQUER #4LTR (GAL)'
+,'NIPPON LACQUER DEAD FLAT #4LTR (GAL)'
+,'NIPPON LACQUER SANDING SEALER #1LTR CLEAR' 
+,'NIPPON LACQUER SANDING SEALER #4LTR CLEAR')
+
+select * from(
+SELECT 
+CONCAT("(",t1.pdno,',') as PDNO
+,CONCAT("'",REPLACE(concat(REPLACE(REPLACE(t0.brand,'?',''),'-',''),' ', t1.size),"'",""),"'",",")as ItemDescription
+,CONCAT("'",t1.Soh,"'",",")as Qty
+,t1.retail AS 'RETAIL'
+,CONCAT(",","'",t1.ru,"'",",") as UOM
+,t1.WHOLE1 as 'wholesale'
+,CONCAT(",","'",t1.W1U,"'",",")as 'WU'
+,WHOLE2 as 'd1'
+,CONCAT(",","'",t1.W2U,"'",",") as 'D1U'
+,WHOLE3 as 'd2'
+,CONCAT(",","'",t1.W3U,"'",",") as 'D2U'
+,AVECOST as 'Cost'
+,CONCAT(",",t1.tcode,")")AS 'tCODE'
+FROM BRAND T0
+INNER JOIN SIZE T1 ON T0.BRANDID = T1.SCODE
+where t1.pdno in (92583,92584,92586,92588,92589,92590,92591,92592,92593,92594)
+)xxx
