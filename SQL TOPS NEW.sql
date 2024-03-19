@@ -18,44 +18,45 @@
 SET @STORE=REPLACE(REPLACE(@STORE,'ALL (Top from all Store)',''),'ALL (Top per Store)','')
 
 -- SELECT * from(
-SELECT 
-[Item Code] as 'Itemcode',
-[Description] as 'ItemName',
-Department,
-Category,
-Store,
-unit as 'UomCode',
-SUM(TOTALQTY) as 'Total Quantity Sold',
-SUM(TOTALCOST) as 'Cost',
-SUM(TOTALSALES) as 'Total Sales',
-CAST(SUM(TOTALSALES) AS FLOAT) - CAST(SUM(TOTALCOST) AS FLOAT) as 'Gross Profit',
-CASE 
-    WHEN (SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) > 0 
-    THEN isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) * 100, 0 )
-    ELSE isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) , 0 ) 
-END as 'Gross Profit Percentage'
+-- SELECT 
+-- [Item Code] as 'Itemcode',
+-- [Description] as 'ItemName',
+-- Department,
+-- Category,
+-- Store,
+-- unit as 'UomCode',
+-- SUM(TOTALQTY) as 'Total Quantity Sold',
+-- SUM(TOTALCOST) as 'Cost',
+-- SUM(TOTALSALES) as 'Total Sales',
+-- CAST(SUM(TOTALSALES) AS FLOAT) - CAST(SUM(TOTALCOST) AS FLOAT) as 'Gross Profit',
+-- CASE 
+--     WHEN (SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) > 0 
+--     THEN isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) * 100, 0 )
+--     ELSE isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) , 0 ) 
+-- END as 'Gross Profit Percentage'
 
-FROM(
+-- FROM(
 SELECT 
-XX.Transaction#,
-XX.[Item Code],
-XX.[Description],
+-- Transaction#,
+[Item Code],
+[Description],
 Department,
 Category,
 Store,
 unit,
 -- IIF(TYPE='AR Credit Memo',XX.[Quantity Sold]*-1,XX.[Quantity Sold]) AS TOTALQTY,
-XX.[Quantity Sold] AS TOTALQTY,
-IIF(TYPE='AR Credit Memo',(XX.COST*XX.[Quantity Sold])*-1,(XX.COST*XX.[Quantity Sold])) AS TOTALCOST,
-IIF(TYPE='AR Credit Memo',XX.[Total Sales]*-1,XX.[Total Sales]) AS TOTALSALES,
-Whse,
-FreeTxt
+-- SUM([Quantity Sold]) AS TOTALQTY,
+-- IIF(TYPE='AR Credit Memo',(XX.COST*XX.[Quantity Sold])*-1,(XX.COST*XX.[Quantity Sold])) AS TOTALCOST,
+-- IIF(TYPE='AR Credit Memo',XX.[Total Sales]*-1,XX.[Total Sales]) AS TOTALSALES,
+Whse
+-- ,FreeTxt
 
 
 FROM(
 SELECT DISTINCT * FROM
-(    --STANDARD AR
-SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TRANSTYPE',
+(    
+    --STANDARD AR
+    SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TRANSTYPE',
     T3.BPLID AS 'BRANCH ID',
     'AR INVOICE' AS 'TYPE',
     T1.U_Category AS 'Category',
@@ -73,7 +74,6 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     T1.InvntryUom AS 'unit',
     T0.NumPerMsr,
     T0.Dscription AS 'Description',
-    T0.NumPerMsr,
     IIF(T0.NumPerMsr>1,T0.QUANTITY*T0.NumPerMsr,T0.Quantity)AS 'Quantity Sold',
     -- T0.Quantity AS 'Quantity Sold',
     T0.U_GPBD AS 'Price Before Discount',
@@ -949,7 +949,7 @@ SELECT T2.ItmsGrpNam AS 'Department',T3.CANCELED,T1.SWW,'' AS 'DE-AP', '' AS 'TR
     AND T3.TaxDate >= @DATEFROM AND T3.TaxDate <= @DATETO
     AND T3.CANCELED='N'
     AND T0.BaseType<>203
-    )RR
+  
 
 )XX
 WHERE [Posting Date] BETWEEN @DATEFROM AND  @DATETO
@@ -958,18 +958,18 @@ AND Department LIKE '%'+@DEPARTMENT+'%'
 AND [Description] NOT LIKE '%DELIVERY CHARGE%'
 
 )xxx
-GROUP BY [Description] ,[Item Code],Department,Category,unit,Store
+GROUP BY [Description] ,[Item Code],Department,Category,unit,Store,Whse,FreeTxt
 
 -- )DD
-ORDER BY 
-case when @SortBy='Gross Profit Percentage' then  CASE 
-    WHEN (SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) > 0 
-    THEN isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) * 100, 0 )
-    ELSE isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) , 0 ) 
-END
-when @SortBy = 'Total Quantity' then SUM(TOTALQTY)
-when @SortBy ='Total Sales' then SUM(TOTALSALES)
-END DESC
+-- ORDER BY 
+-- case when @SortBy='Gross Profit Percentage' then  CASE 
+--     WHEN (SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) > 0 
+--     THEN isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) * 100, 0 )
+--     ELSE isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) , 0 ) 
+-- END
+-- when @SortBy = 'Total Quantity' then SUM(TOTALQTY)
+-- when @SortBy ='Total Sales' then SUM(TOTALSALES)
+-- END DESC
 
 -- ORDER BY 
 -- case when @SortBy='Gross Profit Percentage' then  [Gross Profit Percentage]
