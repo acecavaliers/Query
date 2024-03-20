@@ -18,24 +18,24 @@
 SET @STORE=REPLACE(REPLACE(@STORE,'ALL (Top from all Store)',''),'ALL (Top per Store)','')
 
 -- SELECT * from(
--- SELECT 
--- [Item Code] as 'Itemcode',
--- [Description] as 'ItemName',
--- Department,
--- Category,
--- Store,
--- unit as 'UomCode',
--- SUM(TOTALQTY) as 'Total Quantity Sold',
--- SUM(TOTALCOST) as 'Cost',
--- SUM(TOTALSALES) as 'Total Sales',
--- CAST(SUM(TOTALSALES) AS FLOAT) - CAST(SUM(TOTALCOST) AS FLOAT) as 'Gross Profit',
--- CASE 
---     WHEN (SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) > 0 
---     THEN isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) * 100, 0 )
---     ELSE isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) , 0 ) 
--- END as 'Gross Profit Percentage'
+SELECT 
+[Item Code] as 'Itemcode',
+[Description] as 'ItemName',
+Department,
+Category,
+Store,
+unit as 'UomCode',
+SUM(TOTALQTY) as 'Total Quantity Sold',
+SUM(TOTALCOST) as 'Cost',
+SUM(TOTALSALES) as 'Total Sales',
+CAST(SUM(TOTALSALES) AS FLOAT) - CAST(SUM(TOTALCOST) AS FLOAT) as 'Gross Profit',
+CASE 
+    WHEN (SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) > 0 
+    THEN isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) * 100, 0 )
+    ELSE isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) , 0 ) 
+END as 'Gross Profit Percentage'
 
--- FROM(
+FROM(
 SELECT 
 -- Transaction#,
 [Item Code],
@@ -960,16 +960,16 @@ AND [Description] NOT LIKE '%DELIVERY CHARGE%'
 )xxx
 GROUP BY [Description] ,[Item Code],Department,Category,unit,Store,Whse,FreeTxt
 
--- )DD
--- ORDER BY 
--- case when @SortBy='Gross Profit Percentage' then  CASE 
---     WHEN (SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) > 0 
---     THEN isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) * 100, 0 )
---     ELSE isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) , 0 ) 
--- END
--- when @SortBy = 'Total Quantity' then SUM(TOTALQTY)
--- when @SortBy ='Total Sales' then SUM(TOTALSALES)
--- END DESC
+)DD
+ORDER BY 
+case when @SortBy='Gross Profit Percentage' then  CASE 
+    WHEN (SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) > 0 
+    THEN isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) * 100, 0 )
+    ELSE isnull((SUM(TOTALSALES) - SUM(TOTALCOST)) / nullif( SUM(TOTALSALES) , 0 ) , 0 ) 
+END
+when @SortBy = 'Total Quantity' then SUM(TOTALQTY)
+when @SortBy ='Total Sales' then SUM(TOTALSALES)
+END DESC
 
 -- ORDER BY 
 -- case when @SortBy='Gross Profit Percentage' then  [Gross Profit Percentage]
