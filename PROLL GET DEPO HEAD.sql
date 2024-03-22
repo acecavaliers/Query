@@ -42,10 +42,10 @@ WHERE PeriodFrom ='2024-03-04'
 ORDER by pp.Department
 
 
-
-
-
 select EmpID,CONCAT(Lname, ', ',Fname) from tbl_EmployeeInformation where lname like '%ompas%'
+
+select * from tbl_WeeklyReport where UserID='02-21-3330' and DateFrom ='2024-03-11'
+
 
 select * from tbl_Payroll where Department='SOD-Davao' and PeriodFrom ='2024-03-04'
 
