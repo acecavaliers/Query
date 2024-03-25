@@ -35,7 +35,7 @@ SELECT * FROM tbl_EmployeeInformation WHERE [EmpID]='28-17-1931'
 SELECT * from tbl_Details WHERE  EmpID = '17-19-2874'  and ID='Other-102521-194547'
 
 
-SELECT * from tbl_Details WHERE  EmpID = '28-17-1931'  and ID='Other-102521-194546'
+SELECT * from tbl_Details WHERE  EmpID = '17-20-3280'  and ID='Other-122021-197147'
 
 
 SELECT * from tbl_Details WHERE  Charge LIKE '%568.84%' --EmpID = '17-19-2874'  and ID='Other-102521-194547'
@@ -49,7 +49,7 @@ SELECT * from tbl_WeeklyReport WHERE  userid = '02-21-3330'
 
 SELECT pp.Lname,Fname,Company,qq.* from tbl_Details qq
 inner join tbl_EmployeeInformation pp on pp.EmpID=qq.EmpID
-where Credit LIKE '%142.14%'
+where Credit LIKE '%123.75%'
 
 
 
