@@ -38,7 +38,7 @@ SELECT * from tbl_Details WHERE  EmpID = '17-19-2874'  and ID='Other-102521-1945
 SELECT * from tbl_Details WHERE  EmpID = '17-20-3280'  and ID='Other-122021-197147'
 
 
-SELECT * from tbl_Details WHERE  Charge LIKE '%568.84%' --EmpID = '17-19-2874'  and ID='Other-102521-194547'
+SELECT * from tbl_Details WHERE  Charge LIKE '%760%' --EmpID = '17-19-2874'  and ID='Other-102521-194547'
 
 
 
