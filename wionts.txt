@@ -8,7 +8,7 @@ where brand like '%powerhouse r%'
 select   * 
 From `cusdr`	
 
-
+select * from size
 
 select  * 
 From cusinvi A
