@@ -1,0 +1,21 @@
+
+
+select	
+
+T0.DocNum,
+T1.BaseType
+
+from opch t0
+INNER JOIN PCH1 T1 ON T0.DOCNUM = T1.DOCENTRY
+WHERE T1.WhsCode LIKE '%DS%'
+ORDER BY T0.DOCNUM ASC 
+
+
+SELECT 
+T0.DocNum,
+T0.CardCode,
+T0.CardName,
+T0.TaxDate AS DocumentDate
+FROM OPOR T0 
+LEFT JOIN POR1 T1 ON T0.DOCNUM = T1.DocEntry
+WHERE T1.WhsCode LIKE '%DS%' AND NOT EXISTS(SELECT * FROM PCH1 S1 WHERE S1.BaseDocNum = T0.DocNum)
